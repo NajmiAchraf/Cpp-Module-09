@@ -133,9 +133,9 @@ double BitcoinExchange::stringToDouble(string str) {
 }
 
 vector<int> BitcoinExchange::splitDate(const string &str) {
-	vector<int>	 vect;
-	std::sstream ss(str);
-	string		 nbr;
+	vector<int>		  vect;
+	std::stringstream ss(str);
+	string			  nbr;
 	while (std::getline(ss, nbr, '-')) {
 		if (checkType(nbr) == 1 || checkType(nbr) == 3)
 			try {

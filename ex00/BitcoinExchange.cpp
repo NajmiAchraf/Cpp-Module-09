@@ -13,9 +13,12 @@ void BitcoinExchange::init() {
 		while (std::getline(file, line, '\n')) {
 			row.clear();
 			std::stringstream str(line);
+			// cout << line << endl;
 			while (std::getline(str, word, ',')) {
 				this->row.push_back(word);
+				// cout << word << "  ";
 			}
+			// cout << endl;
 			this->content.push_back(row);
 		}
 	} else {
@@ -133,57 +136,80 @@ double BitcoinExchange::stringToDouble(string str) {
 }
 
 vector<int> BitcoinExchange::splitDate(const string &str) {
-	vector<int>		  vect;
-	std::stringstream ss(str);
-	string			  nbr;
-	while (std::getline(ss, nbr, '-')) {
-		if (checkType(nbr) == 1 || checkType(nbr) == 3)
+	vector<int>		  vect_nbr;
+	std::stringstream ss_date(str);
+	string			  str_nbr;
+	while (std::getline(ss_date, str_nbr, '-')) {
+		if (checkType(str_nbr) == 1 || checkType(str_nbr) == 3)
 			try {
-				vect.push_back(stringToInt(nbr));
+				vect_nbr.push_back(stringToInt(str_nbr));
 			} catch (...) {
 				throw BitcoinExchange::BadInput();
 			}
 		else
 			throw BitcoinExchange::BadInput();
 	}
-	if (nbr.size() != 3)
+	if (vect_nbr.size() != 3)
 		throw BitcoinExchange::BadInput();
-	return nbr;
+	return vect_nbr;
 }
 
-int BitcoinExchange::validate(int i) {
-	vector<int> nbr;
-	double		nbd;
-	try {
-		nbr = splitDate(this->content[i][0]);
-		// 9 January 2009
-		if (nbr[0] < 2009 && 2023 < nbr[0] || nbr[1] < 1 && 12 < nbr[1] || nbr[3] < 1 && 31 < nbr[3])
-			throw BitcoinExchange::BadInput();
+void BitcoinExchange::validate_date(int i) {
+	vector<int> date;
+	const int	leap_months[12]		= {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+	const int	non_leap_months[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+	const int	leap_years[3]		= {2012, 2016, 2020};
 
+	date = splitDate(this->content[i][0]);
+	// 9 January 2009 => 31 December 2023
+	// Check year & month range
+	if ((date[0] < 2009 || 2023 < date[0]) || (date[1] < 1 || 12 < date[1]))
+		throw BitcoinExchange::BadInput();
+
+	// Check day range
+	if (date[0] == leap_years[0] || date[0] == leap_years[1] || date[0] == leap_years[2]) {
+		if (date[2] < 1 || leap_months[date[1] - 1] < date[2])
+			throw BitcoinExchange::BadInput();
+	} else {
+		if (date[2] < 1 || non_leap_months[date[1] - 1] < date[2])
+			throw BitcoinExchange::BadInput();
+	}
+}
+
+void BitcoinExchange::validate(int i) {
+	double nbd;
+
+	try {
+		this->validate_date(i);
 	} catch (...) {
 		throw BitcoinExchange::BadInput();
 	}
+
 	try {
 		nbd = stringToDouble(this->content[i][1]);
-		if (nbd[0] < 0)
-			throw BitcoinExchange::NegativeNumber();
-		if (1000 < nbd[0])
-			throw BitcoinExchange::LargeNumber();
 	} catch (...) {
 		throw BitcoinExchange::BadInput();
 	}
+	if (nbd < 0)
+		throw BitcoinExchange::NegativeNumber();
+	if (1000 < nbd)
+		throw BitcoinExchange::LargeNumber();
 }
 
 void BitcoinExchange::print() {
 
-	for (size_t i = 0; i < this->content.size(); i++) {
+	for (size_t i = 1; i < 2; i++) {
+		// for (size_t i = 0; i < this->content.size(); i++) {
 		try {
 			validate(i);
 			for (size_t j = 0; j < this->content[i].size(); j++) {
-				cout << this->content[i][j] << " => ";
+				if (j == 0)
+					cout << this->content[i][j] << " => ";
+				else if (j == 1)
+					cout << this->content[i][j] << " = ";
 			}
-		} catch (const BitcoinExchange::BadInput &e) {
-			cerr << "Error: " << e.what() << " => " << this->content[0];
+			// } catch (const BitcoinExchange::BadInput &e) {
+			// 	cerr << "Error: " << e.what() << " => " << this->content[0];
 		} catch (const std::exception &e) {
 			cerr << "Error: " << e.what();
 		}

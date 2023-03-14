@@ -108,17 +108,7 @@ re : fclean all
 
 run : re
 	$(T_RUN_S)
-	./$(NAME) 9
-	./$(NAME) 10
-	./$(NAME) 11
-	./$(NAME) 20
-	./$(NAME) 25
-	./$(NAME) 30
-	./$(NAME) 33
-	./$(NAME) 40
-	./$(NAME) 45
-	./$(NAME) 50
-	./$(NAME) 59
+	./$(NAME)
 	$(T_RUN_E)
 
 .PHONY : all clean fclean re run

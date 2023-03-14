@@ -154,7 +154,7 @@ vector<int> BitcoinExchange::splitDate(const string &str) {
 	return vect_nbr;
 }
 
-void BitcoinExchange::validate_date(int i) {
+void BitcoinExchange::validateDate(int i) {
 	vector<int> date;
 	const int	leap_months[12]		= {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 	const int	non_leap_months[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
@@ -180,7 +180,7 @@ void BitcoinExchange::validate(int i) {
 	double nbd;
 
 	try {
-		this->validate_date(i);
+		this->validateDate(i);
 	} catch (...) {
 		throw BitcoinExchange::BadInput();
 	}
@@ -198,8 +198,8 @@ void BitcoinExchange::validate(int i) {
 
 void BitcoinExchange::print() {
 
-	for (size_t i = 1; i < 2; i++) {
-		// for (size_t i = 0; i < this->content.size(); i++) {
+	// for (size_t i = 1; i < 2; i++) {
+	for (size_t i = 0; i < this->content.size(); i++) {
 		try {
 			validate(i);
 			for (size_t j = 0; j < this->content[i].size(); j++) {

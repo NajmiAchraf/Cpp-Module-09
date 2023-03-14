@@ -38,7 +38,7 @@ class BitcoinExchange {
 	int			stringToInt(string str);
 	double		stringToDouble(string str);
 	vector<int> splitDate(const string &str);
-	void		validate_date(int i);
+	void		validateDate(int i);
 	void		validate(int i);
 	void		print();
 
@@ -55,11 +55,6 @@ class BitcoinExchange {
 	class LargeNumber : public std::exception {
 		virtual const char *what() const throw() {
 			return "too large a number.";
-		}
-	};
-	class BadInputd : public std::exception {
-		virtual const char *what() const throw() {
-			return "bad inpsvsut";
 		}
 	};
 };

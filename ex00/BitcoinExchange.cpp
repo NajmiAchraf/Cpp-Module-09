@@ -158,7 +158,6 @@ void BitcoinExchange::validateDate(int i) {
 	vector<int> date;
 	const int	leap_months[12]		= {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 	const int	non_leap_months[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-	const int	leap_years[3]		= {2012, 2016, 2020};
 
 	date = splitDate(this->content[i][0]);
 	// 9 January 2009 => 31 December 2023
@@ -167,13 +166,11 @@ void BitcoinExchange::validateDate(int i) {
 		throw BitcoinExchange::BadInput();
 
 	// Check day range
-	if (date[0] == leap_years[0] || date[0] == leap_years[1] || date[0] == leap_years[2]) {
+	if (date[0] % 4 == 0) {
 		if (date[2] < 1 || leap_months[date[1] - 1] < date[2])
 			throw BitcoinExchange::BadInput();
-	} else {
-		if (date[2] < 1 || non_leap_months[date[1] - 1] < date[2])
-			throw BitcoinExchange::BadInput();
-	}
+	} else if (date[2] < 1 || non_leap_months[date[1] - 1] < date[2])
+		throw BitcoinExchange::BadInput();
 }
 
 double BitcoinExchange::validate(int i) {

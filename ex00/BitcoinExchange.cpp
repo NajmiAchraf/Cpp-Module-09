@@ -8,7 +8,7 @@ BitcoinExchange::BitcoinExchange(string file_name) : file_name(file_name) {
 }
 
 void BitcoinExchange::init() {
-	std::fstream file(this->file_name, std::ios::in);
+	std::fstream file(this->file_name.c_str(), std::ios::in);
 	if (file.is_open()) {
 		while (std::getline(file, line, '\n')) {
 			row.clear();
@@ -176,7 +176,7 @@ void BitcoinExchange::validateDate(int i) {
 	}
 }
 
-void BitcoinExchange::validate(int i) {
+double BitcoinExchange::validate(int i) {
 	double nbd;
 
 	try {
@@ -194,22 +194,23 @@ void BitcoinExchange::validate(int i) {
 		throw BitcoinExchange::NegativeNumber();
 	if (1000 < nbd)
 		throw BitcoinExchange::LargeNumber();
+	return nbd;
 }
 
 void BitcoinExchange::print() {
+	double nbd;
 
-	// for (size_t i = 1; i < 2; i++) {
-	for (size_t i = 0; i < this->content.size(); i++) {
+	for (size_t i = 1; i < this->content.size(); i++) {
 		try {
-			validate(i);
+			nbd = validate(i);
 			for (size_t j = 0; j < this->content[i].size(); j++) {
 				if (j == 0)
 					cout << this->content[i][j] << " => ";
 				else if (j == 1)
-					cout << this->content[i][j] << " = ";
+					cout << this->content[i][j] << " = " << nbd * 1.1;
 			}
-			// } catch (const BitcoinExchange::BadInput &e) {
-			// 	cerr << "Error: " << e.what() << " => " << this->content[0];
+		} catch (const BitcoinExchange::BadInput &e) {
+			cerr << "Error: " << e.what() << " => " << this->content[i][0];
 		} catch (const std::exception &e) {
 			cerr << "Error: " << e.what();
 		}

@@ -25,7 +25,7 @@ class BitcoinExchange {
 	vectring		 row;
 	string			 line;
 	string			 word;
-	string			 file_name;
+	const string	 file_name;
 
   public:
 	explicit BitcoinExchange(string file_name);
@@ -39,20 +39,23 @@ class BitcoinExchange {
 	double		stringToDouble(string str);
 	vector<int> splitDate(const string &str);
 	void		validateDate(int i);
-	void		validate(int i);
+	double		validate(int i);
 	void		print();
 
 	class BadInput : public std::exception {
+	  public:
 		virtual const char *what() const throw() {
 			return "bad input";
 		}
 	};
 	class NegativeNumber : public std::exception {
+	  public:
 		virtual const char *what() const throw() {
 			return "not a positive number.";
 		}
 	};
 	class LargeNumber : public std::exception {
+	  public:
 		virtual const char *what() const throw() {
 			return "too large a number.";
 		}

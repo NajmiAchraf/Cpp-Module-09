@@ -42,18 +42,30 @@ BitcoinExchange::~BitcoinExchange() {
 
 void BitcoinExchange::init() {
 	this->fill(this->base, "data.csv", ',');
-	this->fill(this->content, this->file_name, ',');
+	this->fill(this->content, this->file_name, '|');
 }
 
 void BitcoinExchange::fill(vector<vectring> &to_fill, string name_file, char spliter) {
 	std::fstream file(name_file.c_str(), std::ios::in);
+	int			 i = 0;
+
 	if (file.is_open()) {
 		while (std::getline(file, line, '\n')) {
 			row.clear();
 			std::stringstream str(line);
+			i = 1;
 			while (std::getline(str, word, spliter)) {
 				// word = word.erase(std::remove_if(word.begin(), word.end(), ::isspace), word.end());
-				this->row.push_back(word);
+				cout << "'" << word[word.length() - 1] << "'";
+				if (word[word.length() - 1] == ' ' && i == 1) {
+					word.pop_back();
+					this->row.push_back(word);
+				} else if (word[0] == ' ' && i == 2) {
+					word.erase(0, 1);
+					this->row.push_back(word);
+				} else
+					this->row.push_back(word);
+				i++;
 			}
 			to_fill.push_back(row);
 		}

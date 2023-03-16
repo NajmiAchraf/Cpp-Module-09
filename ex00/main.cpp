@@ -19,7 +19,6 @@ int main(int ac, char **av) {
 		} catch (const std::exception &e) {
 			cerr << "Error: " << e.what() << endl;
 		}
-
 	} else {
 		cout << "Error: could not open file." << endl;
 	}

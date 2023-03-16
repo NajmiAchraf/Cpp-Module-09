@@ -8,6 +8,7 @@ BitcoinExchange::BitcoinExchange(string file_name) : file_name(file_name) {
 	cout << C_GREEN << "Parameterize constructor" << C_RES << endl;
 	try {
 		this->init();
+		this->print();
 	} catch (const BitcoinExchange::BadInput &e) {
 		throw BitcoinExchange::BadInput();
 	} catch (const BitcoinExchange::NegativeNumber &e) {
@@ -17,7 +18,6 @@ BitcoinExchange::BitcoinExchange(string file_name) : file_name(file_name) {
 	} catch (const BitcoinExchange::OpenFile &e) {
 		throw BitcoinExchange::OpenFile();
 	}
-	this->print();
 }
 
 BitcoinExchange::BitcoinExchange(const BitcoinExchange &bitcoinExchange) : file_name(bitcoinExchange.file_name) {
@@ -47,25 +47,21 @@ void BitcoinExchange::init() {
 
 void BitcoinExchange::fill(vector<vectring> &to_fill, string name_file, char spliter) {
 	std::fstream file(name_file.c_str(), std::ios::in);
-	int			 i = 0;
-
 	if (file.is_open()) {
 		while (std::getline(file, line, '\n')) {
 			row.clear();
 			std::stringstream str(line);
-			i = 1;
-			while (std::getline(str, word, spliter)) {
-				// word = word.erase(std::remove_if(word.begin(), word.end(), ::isspace), word.end());
-				cout << "'" << word[word.length() - 1] << "'";
+			for (size_t i = 1; std::getline(str, word, spliter); i++) {
 				if (word[word.length() - 1] == ' ' && i == 1) {
 					word.pop_back();
 					this->row.push_back(word);
 				} else if (word[0] == ' ' && i == 2) {
 					word.erase(0, 1);
 					this->row.push_back(word);
-				} else
+				} else if (spliter == ',') {
 					this->row.push_back(word);
-				i++;
+				} else if (spliter == '|')
+					this->row.push_back("word");
 			}
 			to_fill.push_back(row);
 		}
@@ -238,6 +234,8 @@ double BitcoinExchange::validate(int i) {
 		type = checkType(this->content[i][1]);
 		if (type == 1 || type == 3 || type == 2)
 			value = stringToDouble(this->content[i][1]);
+		else
+			throw BitcoinExchange::BadInput();
 	} catch (...) {
 		throw BitcoinExchange::BadInput();
 	}
@@ -272,6 +270,7 @@ int BitcoinExchange::find(int i) {
 	}
 	return -1;
 }
+
 void BitcoinExchange::print(int i, int value, int index) {
 	double exchange;
 

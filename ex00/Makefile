@@ -108,7 +108,7 @@ re : fclean all
 
 run : re
 	$(T_RUN_S)
-	./$(NAME)
+	./$(NAME) btc.csv
 	$(T_RUN_E)
 
 .PHONY : all clean fclean re run

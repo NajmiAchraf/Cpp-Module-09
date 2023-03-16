@@ -1,28 +1,64 @@
 #include "BitcoinExchange.hpp"
 
-BitcoinExchange::BitcoinExchange() {}
+BitcoinExchange::BitcoinExchange() {
+	cout << C_GREEN << "Default constructor" << C_RES << endl;
+}
 
 BitcoinExchange::BitcoinExchange(string file_name) : file_name(file_name) {
-	this->init();
+	cout << C_GREEN << "Parameterize constructor" << C_RES << endl;
+	try {
+		this->init();
+	} catch (const BitcoinExchange::BadInput &e) {
+		throw BitcoinExchange::BadInput();
+	} catch (const BitcoinExchange::NegativeNumber &e) {
+		throw BitcoinExchange::NegativeNumber();
+	} catch (const BitcoinExchange::LargeNumber &e) {
+		throw BitcoinExchange::LargeNumber();
+	} catch (const BitcoinExchange::OpenFile &e) {
+		throw BitcoinExchange::OpenFile();
+	}
 	this->print();
 }
 
+BitcoinExchange::BitcoinExchange(const BitcoinExchange &bitcoinExchange) : file_name(bitcoinExchange.file_name) {
+	cout << C_CYAN << "Copy constructor" << C_RES << endl;
+	*this = bitcoinExchange;
+}
+
+BitcoinExchange &BitcoinExchange::operator=(const BitcoinExchange &bitcoinExchange) {
+	cout << C_CYAN << "Copy assignment operator" << C_RES << endl;
+	if (this != &bitcoinExchange) {
+		this->content = bitcoinExchange.content;
+		this->row	  = bitcoinExchange.row;
+		this->line	  = bitcoinExchange.line;
+		this->word	  = bitcoinExchange.word;
+	}
+	return *this;
+}
+
+BitcoinExchange::~BitcoinExchange() {
+	cout << C_RED << "Destructor" << C_RES << endl;
+}
+
 void BitcoinExchange::init() {
-	std::fstream file(this->file_name.c_str(), std::ios::in);
+	this->fill(this->base, "data.csv", ',');
+	this->fill(this->content, this->file_name, ',');
+}
+
+void BitcoinExchange::fill(vector<vectring> &to_fill, string name_file, char spliter) {
+	std::fstream file(name_file.c_str(), std::ios::in);
 	if (file.is_open()) {
 		while (std::getline(file, line, '\n')) {
 			row.clear();
 			std::stringstream str(line);
-			// cout << line << endl;
-			while (std::getline(str, word, ',')) {
+			while (std::getline(str, word, spliter)) {
+				// word = word.erase(std::remove_if(word.begin(), word.end(), ::isspace), word.end());
 				this->row.push_back(word);
-				// cout << word << "  ";
 			}
-			// cout << endl;
-			this->content.push_back(row);
+			to_fill.push_back(row);
 		}
 	} else {
-		cerr << "Error: can't open file " << file_name << endl;
+		throw BitcoinExchange::OpenFile();
 	}
 }
 
@@ -139,8 +175,11 @@ vector<int> BitcoinExchange::splitDate(const string &str) {
 	vector<int>		  vect_nbr;
 	std::stringstream ss_date(str);
 	string			  str_nbr;
+	int				  type;
+
 	while (std::getline(ss_date, str_nbr, '-')) {
-		if (checkType(str_nbr) == 1 || checkType(str_nbr) == 3)
+		type = checkType(str_nbr);
+		if (type == 1)
 			try {
 				vect_nbr.push_back(stringToInt(str_nbr));
 			} catch (...) {
@@ -156,8 +195,8 @@ vector<int> BitcoinExchange::splitDate(const string &str) {
 
 void BitcoinExchange::validateDate(int i) {
 	vector<int> date;
-	const int	leap_months[12]		= {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-	const int	non_leap_months[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+	const int	leap_year_months[12]	 = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+	const int	non_leap_year_months[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 	date = splitDate(this->content[i][0]);
 	// 9 January 2009 => 31 December 2023
@@ -167,14 +206,15 @@ void BitcoinExchange::validateDate(int i) {
 
 	// Check day range
 	if (date[0] % 4 == 0) {
-		if (date[2] < 1 || leap_months[date[1] - 1] < date[2])
+		if (date[2] < 1 || leap_year_months[date[1] - 1] < date[2])
 			throw BitcoinExchange::BadInput();
-	} else if (date[2] < 1 || non_leap_months[date[1] - 1] < date[2])
+	} else if (date[2] < 1 || non_leap_year_months[date[1] - 1] < date[2])
 		throw BitcoinExchange::BadInput();
 }
 
 double BitcoinExchange::validate(int i) {
-	double nbd;
+	double value = 0.0;
+	int	   type;
 
 	try {
 		this->validateDate(i);
@@ -183,34 +223,78 @@ double BitcoinExchange::validate(int i) {
 	}
 
 	try {
-		nbd = stringToDouble(this->content[i][1]);
+		type = checkType(this->content[i][1]);
+		if (type == 1 || type == 3 || type == 2)
+			value = stringToDouble(this->content[i][1]);
 	} catch (...) {
 		throw BitcoinExchange::BadInput();
 	}
-	if (nbd < 0)
+	if (value < 0)
 		throw BitcoinExchange::NegativeNumber();
-	if (1000 < nbd)
+	if (1000 < value)
 		throw BitcoinExchange::LargeNumber();
-	return nbd;
+	return value;
+}
+
+int BitcoinExchange::findPrevious(int i) {
+	vector<int> base_date;
+	vector<int> content_date;
+
+	content_date = splitDate(this->content[i][0]);
+	for (size_t a = this->base.size() - 1; a > 1; a--) {
+		// check previous Dates
+		base_date = splitDate(this->base[a][0]);
+		if (base_date[0] <= content_date[0] && base_date[1] <= content_date[1] && base_date[2] <= content_date[2]) {
+			return a;
+		}
+	}
+	return -1;
+}
+
+int BitcoinExchange::find(int i) {
+	for (size_t k = 1; k < this->base.size(); k++) {
+		// check similar Dates
+		if (this->base[k][0] == this->content[i][0]) {
+			return k;
+		}
+	}
+	return -1;
+}
+void BitcoinExchange::print(int i, int value, int index) {
+	double exchange;
+
+	exchange = stringToDouble(this->base[index][1]);
+	for (size_t j = 0; j < this->content[i].size(); j++) {
+		if (j == 0)
+			cout << this->content[i][j] << " => ";
+		else if (j == 1)
+			cout << this->content[i][j] << " = " << exchange * value << endl;
+	}
 }
 
 void BitcoinExchange::print() {
-	double nbd;
+	double value;
+	int	   current_index;
+	int	   previous_index;
 
 	for (size_t i = 1; i < this->content.size(); i++) {
 		try {
-			nbd = validate(i);
-			for (size_t j = 0; j < this->content[i].size(); j++) {
-				if (j == 0)
-					cout << this->content[i][j] << " => ";
-				else if (j == 1)
-					cout << this->content[i][j] << " = " << nbd * 1.1;
+			value		   = validate(i);
+			current_index  = this->find(i);
+			previous_index = this->findPrevious(i);
+			// cout << i << " current_index = " << current_index << "  ||  "
+			// << "previous_index = " << previous_index << endl;
+			if (current_index > 0) {
+				this->print(i, value, current_index);
+			} else if (previous_index > 0) {
+				this->print(i, value, previous_index);
 			}
 		} catch (const BitcoinExchange::BadInput &e) {
-			cerr << "Error: " << e.what() << " => " << this->content[i][0];
+			if (this->find(i) > 0 || this->findPrevious(i) > 0)
+				cerr << "Error: " << e.what() << " => " << this->content[i][0] << endl;
 		} catch (const std::exception &e) {
-			cerr << "Error: " << e.what();
+			if (this->find(i) > 0 || this->findPrevious(i) > 0)
+				cerr << "Error: " << e.what() << endl;
 		}
-		cout << endl;
 	}
 }

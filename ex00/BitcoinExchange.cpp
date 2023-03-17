@@ -76,7 +76,7 @@ int BitcoinExchange::checkType(string str) {
 	bool point	= false;
 	int	 num	= 0;
 	int	 decLen = 0;
-	int	 type	= -1; // 0: char, 1: int, 2: float, 3: double
+	int	 type	= -1; // {0: char} {1: int} {2: float} {3: double}
 
 	if (str[i] == '-' || str[i] == '+')
 		i++;
@@ -232,7 +232,7 @@ double BitcoinExchange::validate(int i) {
 
 	try {
 		type = checkType(this->content[i][1]);
-		if (type == 1 || type == 3 || type == 2)
+		if (type == 1 || type == 3)
 			value = stringToDouble(this->content[i][1]);
 		else
 			throw BitcoinExchange::BadInput();
@@ -293,8 +293,7 @@ void BitcoinExchange::print() {
 			value		   = validate(i);
 			current_index  = this->find(i);
 			previous_index = this->findPrevious(i);
-			// cout << i << " current_index = " << current_index << "  ||  "
-			// << "previous_index = " << previous_index << endl;
+
 			if (current_index > 0) {
 				this->print(i, value, current_index);
 			} else if (previous_index > 0) {

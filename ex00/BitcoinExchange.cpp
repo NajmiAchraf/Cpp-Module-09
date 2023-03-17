@@ -301,11 +301,9 @@ void BitcoinExchange::print() {
 				this->print(i, value, previous_index);
 			}
 		} catch (const BitcoinExchange::BadInput &e) {
-			if (this->find(i) > 0 || this->findPrevious(i) > 0)
-				cerr << "Error: " << e.what() << " => " << this->content[i][0] << endl;
+			cerr << "Error: " << e.what() << " => " << this->content[i][0] << endl;
 		} catch (const std::exception &e) {
-			if (this->find(i) > 0 || this->findPrevious(i) > 0)
-				cerr << "Error: " << e.what() << endl;
+			cerr << "Error: " << e.what() << endl;
 		}
 	}
 }

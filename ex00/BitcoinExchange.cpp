@@ -58,10 +58,9 @@ void BitcoinExchange::fill(vector<vectring> &to_fill, string name_file, char spl
 				} else if (word[0] == ' ' && i == 2) {
 					word.erase(0, 1);
 					this->row.push_back(word);
-				} else if (spliter == ',') {
+				} else {
 					this->row.push_back(word);
-				} else if (spliter == '|')
-					this->row.push_back("word");
+				}
 			}
 			to_fill.push_back(row);
 		}
@@ -211,7 +210,7 @@ void BitcoinExchange::validateDate(int i) {
 	date = splitDate(this->content[i][0]);
 	// 9 January 2009 => 31 December 2023
 	// Check year & month range
-	if ((date[0] < 2009 || 2023 < date[0]) || (date[1] < 1 || 12 < date[1]))
+	if ((date[0] < 2009 || 2022 < date[0]) || (date[1] < 1 || 12 < date[1]))
 		throw BitcoinExchange::BadInput();
 
 	// Check day range

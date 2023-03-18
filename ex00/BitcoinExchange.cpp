@@ -184,10 +184,11 @@ vector<int> BitcoinExchange::splitDate(const string &str) {
 	std::stringstream ss_date(str);
 	string			  str_nbr;
 	int				  type;
+	int				  i = 1;
 
 	while (std::getline(ss_date, str_nbr, '-')) {
 		type = checkType(str_nbr);
-		if (type == 1)
+		if (type == 1 && ((i == 1 && str_nbr.length() == 4) || (i == 2 && str_nbr.length() == 2) || (i == 3 && str_nbr.length() == 2)))
 			try {
 				vect_nbr.push_back(stringToInt(str_nbr));
 			} catch (...) {
@@ -195,6 +196,7 @@ vector<int> BitcoinExchange::splitDate(const string &str) {
 			}
 		else
 			throw BitcoinExchange::BadInput();
+		i++;
 	}
 	if (vect_nbr.size() != 3)
 		throw BitcoinExchange::BadInput();
@@ -243,6 +245,8 @@ double BitcoinExchange::validate(int i) {
 		throw BitcoinExchange::NegativeNumber();
 	if (1000 < value)
 		throw BitcoinExchange::LargeNumber();
+	if (this->content[i].size() != 2)
+		throw BitcoinExchange::BadInput();
 	return value;
 }
 
@@ -288,21 +292,25 @@ void BitcoinExchange::print() {
 	int	   current_index;
 	int	   previous_index;
 
-	for (size_t i = 1; i < this->content.size(); i++) {
-		try {
-			value		   = validate(i);
-			current_index  = this->find(i);
-			previous_index = this->findPrevious(i);
+	for (size_t i = 0; i < this->content.size(); i++) {
+		if (i == 0 && (this->content[i].size() != 2 || this->content[i][0] != "data" || this->content[i][1] != "value")) {
+			cerr << "Error: " << this->content[i][0] << " | " << this->content[i][1] << endl;
+		} else {
+			try {
+				value		   = validate(i);
+				current_index  = this->find(i);
+				previous_index = this->findPrevious(i);
 
-			if (current_index > 0) {
-				this->print(i, value, current_index);
-			} else if (previous_index > 0) {
-				this->print(i, value, previous_index);
+				if (current_index > 0) {
+					this->print(i, value, current_index);
+				} else if (previous_index > 0) {
+					this->print(i, value, previous_index);
+				}
+			} catch (const BitcoinExchange::BadInput &e) {
+				cerr << "Error: " << e.what() << " => " << this->content[i][0] << endl;
+			} catch (const std::exception &e) {
+				cerr << "Error: " << e.what() << endl;
 			}
-		} catch (const BitcoinExchange::BadInput &e) {
-			cerr << "Error: " << e.what() << " => " << this->content[i][0] << endl;
-		} catch (const std::exception &e) {
-			cerr << "Error: " << e.what() << endl;
 		}
 	}
 }

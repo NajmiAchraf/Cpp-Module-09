@@ -2,7 +2,6 @@
 #define RPN_HPP
 
 #include <algorithm>
-#include <cmath>
 #include <exception>
 #include <iostream>
 #include <sstream>
@@ -23,24 +22,28 @@ using std::string;
 class RPN {
   private:
 	RPN();
-	string _entry;
+	char	  *_entry, *_ptr;
+	string	   str;
+	stack<int> _num_stack;
+	char	  *_next_token;
+	int		   o;
+	double	   a, b, r;
 
   public:
-	RPN(string entry);
+	RPN(char *entry);
 	RPN(const RPN &rpn);
 	RPN &operator=(const RPN &rpn);
 	~RPN();
 
-	void init();
-	int	 checkType(string str);
 	int	 stringToInt(string str);
+	void getResult();
 
 	class Error : public std::exception {
 	  public:
 		virtual const char *what() const throw() {
 			return "Error";
 		}
-	}
+	};
 };
 
 #endif

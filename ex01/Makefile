@@ -18,7 +18,8 @@ NAME	= $(EXE_DIR)/$(NOM)
 NAME_UP	= $(shell echo $(NOM) | tr '[:lower:]' '[:upper:]')
 
 SRCS = \
-	main.cpp		\
+	main.cpp	\
+	RPN.cpp		\
 
 #***************************************#
 #				FOLDERS					#
@@ -107,17 +108,7 @@ re : fclean all
 
 run : re
 	$(T_RUN_S)
-	./$(NAME) 9
-	./$(NAME) 10
-	./$(NAME) 11
-	./$(NAME) 20
-	./$(NAME) 25
-	./$(NAME) 30
-	./$(NAME) 33
-	./$(NAME) 40
-	./$(NAME) 45
-	./$(NAME) 50
-	./$(NAME) 59
+	./$(NAME) "8 9 * 9 - 9 - 9 - 4 - 1 +"
 	$(T_RUN_E)
 
 .PHONY : all clean fclean re run

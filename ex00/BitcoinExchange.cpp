@@ -45,29 +45,32 @@ void BitcoinExchange::init() {
 	this->fill(this->content, this->file_name, '|');
 }
 
+void BitcoinExchange::strim(int i, char spliter) {
+	if (spliter == '|') {
+		if (i == 1 && this->word[this->word.length() - 1] == ' ')
+			this->word.erase(this->word.length() - 1, 1);
+		else if (i == 1 && this->word[this->word.length() - 1] != ' ')
+			this->word.append(" ");
+		if (i == 2 && this->word[0] == ' ')
+			this->word.erase(0, 1);
+		else if (i == 2 && this->word[0] != ' ')
+			this->word.append("x");
+	}
+}
+
 void BitcoinExchange::fill(vector<vectring> &to_fill, string name_file, char spliter) {
 	std::fstream file(name_file.c_str(), std::ios::in);
 	if (file.is_open()) {
-		while (std::getline(file, line, '\n')) {
+		while (std::getline(file, this->line, '\n')) {
 			row.clear();
-			std::stringstream str(line);
-			for (size_t i = 1; std::getline(str, word, spliter); i++) {
-				if (spliter == '|') {
-					if (i == 1 && word[word.length() - 1] == ' ')
-						word.erase(word.length() - 1, 1);
-					else if (i == 1 && word[word.length() - 1] != ' ')
-						word.append(" ");
-					if (i == 2 && word[0] == ' ')
-						word.erase(0, 1);
-					else if (i == 2 && word[0] != ' ')
-						word.append("x");
-				}
-				cout << "'" << word << "'" << endl;
-				this->row.push_back(word);
+			std::stringstream str(this->line);
+			for (size_t i = 1; std::getline(str, this->word, spliter); i++) {
+				this->strim(i, spliter);
+				this->row.push_back(this->word);
 			}
 			if (this->row.size() == 0)
-				this->row.push_back("empty");
-			to_fill.push_back(row);
+				this->row.push_back("'empty line'");
+			to_fill.push_back(this->row);
 		}
 	} else {
 		throw BitcoinExchange::OpenFile();
@@ -230,6 +233,8 @@ double BitcoinExchange::validate(int i) {
 	double value = 0.0;
 	int	   type;
 
+	if (this->content[i].size() != 2)
+		throw BitcoinExchange::BadInput();
 	try {
 		this->validateDate(i);
 	} catch (...) {
@@ -249,8 +254,6 @@ double BitcoinExchange::validate(int i) {
 		throw BitcoinExchange::NegativeNumber();
 	if (1000 < value)
 		throw BitcoinExchange::LargeNumber();
-	if (this->content[i].size() != 2)
-		throw BitcoinExchange::BadInput();
 	return value;
 }
 
@@ -297,9 +300,9 @@ void BitcoinExchange::print() {
 	int	   previous_index;
 
 	for (size_t i = 0; i < this->content.size(); i++) {
-		if (i == 0 && (this->content[i].size() != 2 || this->content[i][0] != "data" || this->content[i][1] != "value")) {
+		if (i == 0 && (this->content[i].size() != 2 || this->content[i][0] != "date" || this->content[i][1] != "value")) {
 			cerr << "Error: " << this->content[i][0] << " | " << this->content[i][1] << endl;
-		} else {
+		} else if (i > 0) {
 			try {
 				value		   = validate(i);
 				current_index  = this->find(i);

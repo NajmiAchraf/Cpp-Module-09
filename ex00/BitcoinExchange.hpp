@@ -40,6 +40,7 @@ class BitcoinExchange {
 	~BitcoinExchange();
 
 	void		init();
+	void		strim(int i, char spliter);
 	void		fill(vector<vectring> &to_fill, string name_file, char spliter);
 	int			checkType(string str);
 	int			stringToInt(string str);

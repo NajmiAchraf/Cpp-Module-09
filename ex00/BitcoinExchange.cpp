@@ -52,16 +52,14 @@ void BitcoinExchange::fill(vector<vectring> &to_fill, string name_file, char spl
 			row.clear();
 			std::stringstream str(line);
 			for (size_t i = 1; std::getline(str, word, spliter); i++) {
-				if (word[word.length() - 1] == ' ' && i == 1) {
+				if (word[word.length() - 1] == ' ' && i == 1)
 					word.erase(word.length() - 1, 1);
-					this->row.push_back(word);
-				} else if (word[0] == ' ' && i == 2) {
+				else if (word[0] == ' ' && i == 2)
 					word.erase(0, 1);
-					this->row.push_back(word);
-				} else {
-					this->row.push_back(word);
-				}
+				this->row.push_back(word);
 			}
+			if (this->row.size() == 0)
+				this->row.push_back("empty");
 			to_fill.push_back(row);
 		}
 	} else {

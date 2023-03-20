@@ -2,6 +2,7 @@
 #define RPN_HPP
 
 #include <algorithm>
+#include <cstring>
 #include <exception>
 #include <iostream>
 #include <sstream>

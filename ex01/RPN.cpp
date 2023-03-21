@@ -93,5 +93,7 @@ void RPN::getResult() {
 			this->_num_stack.push(this->stringToInt(str));
 		}
 		this->_ptr = strtok_r(nullptr, " ", &this->_next_token);
+		if (!this->_ptr && this->_num_stack.size() != 1)
+			throw RPN::Error();
 	}
 }

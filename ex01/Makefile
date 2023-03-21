@@ -108,7 +108,7 @@ re : fclean all
 
 run : re
 	$(T_RUN_S)
-	./$(NAME) "8 9 * 9 - 9 - 9 - 4 - 1 +"
+	./$(NAME) "8 9 * 9 - 9 - 9 - 4 - 1 + 9"
 	$(T_RUN_E)
 
 .PHONY : all clean fclean re run

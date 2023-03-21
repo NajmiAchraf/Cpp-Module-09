@@ -5,6 +5,8 @@
 #include <array>
 #include <exception>
 #include <iostream>
+#include <iterator>
+#include <list>
 #include <map>
 #include <string>
 
@@ -17,6 +19,7 @@ using std::array;
 using std::cerr;
 using std::cout;
 using std::endl;
+using std::list;
 using std::map;
 using std::string;
 
@@ -24,18 +27,21 @@ class PmergeMe {
   private:
 	PmergeMe();
 	char		**_nbrs;
+	size_t		  _len;
 	map<int, int> _num_map;
-	array		  _num_arr;
+	list<int>	  _num_lst;
 
   public:
-	PmergeMe(char **nbrs);
+	PmergeMe(int ac, char **av);
 	PmergeMe(const PmergeMe &pmergeMe);
 	PmergeMe &operator=(const PmergeMe &pmergeMe);
 	~PmergeMe();
 
 	int	 stringToInt(string str);
 	void init();
-	void getResult();
+	void merge_insert_sort();
+	void insert_sort();
+	void merge_sort();
 
 	class Error : public std::exception {
 	  public:

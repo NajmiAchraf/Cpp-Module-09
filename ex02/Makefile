@@ -108,7 +108,7 @@ re : fclean all
 
 run : re
 	$(T_RUN_S)
-	./$(NAME)
+	./$(NAME) 3 5 9 7 4
 	$(T_RUN_E)
 
 .PHONY : all clean fclean re run

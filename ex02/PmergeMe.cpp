@@ -4,10 +4,11 @@ PmergeMe::PmergeMe() {
 	cout << C_GREEN << "Default constructor" << C_RES << endl;
 }
 
-PmergeMe::PmergeMe(char **nbrs) {
+PmergeMe::PmergeMe(int ac, char **av) {
 	cout << C_GREEN << "Parameterize constructor" << C_RES << endl;
 
-	this->_nbrs = nbrs;
+	this->_nbrs = av;
+	this->_len	= ac - 1;
 
 	try {
 		this->init();
@@ -25,7 +26,7 @@ PmergeMe::PmergeMe(const PmergeMe &pmergeMe) {
 PmergeMe &PmergeMe::operator=(const PmergeMe &pmergeMe) {
 	cout << C_CYAN << "Copy assignment operator" << C_RES << endl;
 	if (this != &pmergeMe) {
-		this->_entry = pmergeMe._entry;
+		this->_nbrs = pmergeMe._nbrs;
 	}
 	return *this;
 }
@@ -40,11 +41,6 @@ int PmergeMe::stringToInt(string str) {
 	int	 sign = 1;
 	long num  = 0;
 
-	if (str[i] == '-') {
-		sign = -1;
-		i++;
-	} else if (str[i] == '+')
-		i++;
 	if (str[i] == '\0')
 		throw PmergeMe::Error();
 	while (i < len) {
@@ -58,7 +54,23 @@ int PmergeMe::stringToInt(string str) {
 }
 
 void PmergeMe::init() {
+	string s;
+	for (size_t i = 0; i < this->_len; i++) {
+		s = this->_nbrs[i + 1];
+
+		this->_num_map[i] = stringToInt(s);
+		this->_num_lst.push_back(stringToInt(s));
+	}
+
+	// list<int>::iterator it = this->_num_lst.begin();
+	// for (size_t i = 0; i < this->_len; i++) {
+	// 	cout << this->_num_map[i] << "   |   " << *it << endl;
+	// 	it++;
+	// }
 }
 
-void PmergeMe::getResult() {
+void PmergeMe::merge_insert_sort() {
+	if (this->_num_map.size() < 2) {
+		return;
+	}
 }

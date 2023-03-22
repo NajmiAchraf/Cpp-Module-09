@@ -92,7 +92,7 @@ int BitcoinExchange::checkType(string str) {
 	while (i < len) {
 		if (isdigit(str[i]))
 			num++;
-		else if (str[i] == '.') {
+		else if (str[i] == '.' || str[i] == ',') {
 			if (point || i == len - 1)
 				break;
 			point = true;
@@ -166,7 +166,7 @@ double BitcoinExchange::stringToDouble(string str) {
 	while (i < len) {
 		if (isdigit(str[i]))
 			num = num * 10 + (str[i] - '0');
-		else if (str[i] == '.') {
+		else if (str[i] == '.' || str[i] == ',') {
 			i++;
 			while (i < len) {
 				if (isdigit(str[i])) {

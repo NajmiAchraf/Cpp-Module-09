@@ -53,23 +53,50 @@ int PmergeMe::stringToInt(string str) {
 }
 
 void PmergeMe::init() {
-	string s;
+	string str;
 	for (size_t i = 0; i < this->_len; i++) {
-		s = this->_nbrs[i + 1];
+		str = this->_nbrs[i + 1];
 
-		this->_num_map[i] = stringToInt(s);
-		this->_num_dqu.push_back(stringToInt(s));
+		this->_num_map[i] = stringToInt(str);
+		this->_num_dqu.push_back(stringToInt(str));
 	}
 
+	// Before: 3 5 9 7 4
+	cout << "Before: ";
 	for (size_t i = 0; i < this->_len; i++) {
-		cout << this->_num_map[i] << "   |   " << this->_num_dqu[i] << endl;
+		cout << this->_num_map[i] << " ";
 	}
-	cout << "_________________________" << endl;
+	// for (size_t i = 0; i < this->_len; i++) {
+	// 	cout << << this->_num_dqu[i] << " ";
+	// }
+	cout << endl;
+
+	clock_t s, e;
+	s			   = clock();
 	this->_num_map = this->merge_insert_sort(this->_num_map);
+	e			   = clock();
+	// get the differential time in microseconds
+	double time1 = static_cast<double>((e - s) / (CLOCKS_PER_SEC / 1e6));
+
+	s			   = clock();
 	this->_num_dqu = this->merge_insert_sort(this->_num_dqu);
+	e			   = clock();
+	// get the differential time in microseconds
+	double time2 = static_cast<double>((e - s) / (CLOCKS_PER_SEC / 1e6));
+
+	// After: 3 4 5 7 9
+	cout << "After: ";
 	for (size_t i = 0; i < this->_len; i++) {
-		cout << this->_num_map[i] << "   |   " << this->_num_dqu[i] << endl;
+		cout << this->_num_map[i] << " ";
 	}
+	// for (size_t i = 0; i < this->_len; i++) {
+	// 	cout << this->_num_dqu[i] << " ";
+	// }
+	cout << endl;
+	// Time to process a range of 5 elements with std::[..] : 0.00031 us
+	// Time to process a range of 5 elements with std::[..] : 0.00014 us
+	cout << "Time to process a range of " << this->_len << " elements with std::map : " << time1 << " us" << endl;
+	cout << "Time to process a range of " << this->_len << " elements with std::deque : " << time2 << " us" << endl;
 }
 
 map<int, int> PmergeMe::merge_sort(map<int, int> _left_arr, map<int, int> _right_arr) {
@@ -116,7 +143,7 @@ map<int, int> PmergeMe::insert_sort(map<int, int> _arr) {
 
 map<int, int> PmergeMe::merge_insert_sort(map<int, int> _arr) {
 	// base case
-	if (_arr.size() < 2)
+	if (_arr.size() < 5)
 		return this->insert_sort(_arr);
 
 	// split the map into two halves
@@ -180,7 +207,7 @@ deque<int> PmergeMe::insert_sort(deque<int> _arr) {
 
 deque<int> PmergeMe::merge_insert_sort(deque<int> _arr) {
 	// base case
-	if (_arr.size() < 2)
+	if (_arr.size() < 5)
 		return this->insert_sort(_arr);
 
 	// split the map into two halves

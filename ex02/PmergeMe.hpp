@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <array>
+#include <ctime>
 #include <deque>
 #include <exception>
 #include <iostream>

@@ -5,7 +5,7 @@
 CPP			= c++
 CPPFLAGS	= -Wall -Wextra -Werror
 CPPFLAGS	+= -std=c++98
-CPPFLAGS	+= -g -fsanitize=address
+# CPPFLAGS	+= -g -fsanitize=address
 
 CPL = 0
 
@@ -109,7 +109,8 @@ re : fclean all
 run : re
 	$(T_RUN_S)
 	# ./$(NAME) `jot -r 3000 1 1000 | tr '\n' ' '`
-	./$(NAME) `jot -r 3000 0 3000 | tr '\n' ' '`
+	# ./$(NAME) `jot -r 3000 0 3000 | tr '\n' ' '`
+	./$(NAME) `ruby -e "puts (1..300).to_a.shuffle.join(' ')"`
 	$(T_RUN_E)
 
 .PHONY : all clean fclean re run

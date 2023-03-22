@@ -16,6 +16,7 @@ def merge(left_arr, right_arr):
         print(result)
     result += left_arr[i:]
     result += right_arr[j:]
+    print(result)
     return result
 
 

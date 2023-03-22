@@ -5,7 +5,7 @@
 CPP			= c++
 CPPFLAGS	= -Wall -Wextra -Werror
 CPPFLAGS	+= -std=c++98
-# CPPFLAGS	+= -g -fsanitize=address
+CPPFLAGS	+= -g -fsanitize=address
 
 CPL = 0
 
@@ -108,7 +108,8 @@ re : fclean all
 
 run : re
 	$(T_RUN_S)
-	./$(NAME) 3 5 9 7 4
+	# ./$(NAME) `jot -r 3000 1 1000 | tr '\n' ' '`
+	./$(NAME) `jot -r 3000 0 3000 | tr '\n' ' '`
 	$(T_RUN_E)
 
 .PHONY : all clean fclean re run

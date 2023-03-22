@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <array>
+#include <deque>
 #include <exception>
 #include <iostream>
 #include <iterator>
@@ -18,8 +19,8 @@
 using std::array;
 using std::cerr;
 using std::cout;
+using std::deque;
 using std::endl;
-using std::list;
 using std::map;
 using std::string;
 
@@ -29,7 +30,7 @@ class PmergeMe {
 	char		**_nbrs;
 	size_t		  _len;
 	map<int, int> _num_map;
-	list<int>	  _num_lst;
+	deque<int>	  _num_dqu;
 
   public:
 	PmergeMe(int ac, char **av);
@@ -39,9 +40,14 @@ class PmergeMe {
 
 	int	 stringToInt(string str);
 	void init();
-	void merge_insert_sort();
-	void insert_sort();
-	void merge_sort();
+
+	map<int, int> merge_sort(map<int, int> _left_arr, map<int, int> _right_arr);
+	map<int, int> insert_sort(map<int, int> _arr);
+	map<int, int> merge_insert_sort(map<int, int> _arr);
+
+	deque<int> merge_sort(deque<int> _left_arr, deque<int> _right_arr);
+	deque<int> insert_sort(deque<int> _arr);
+	deque<int> merge_insert_sort(deque<int> _arr);
 
 	class Error : public std::exception {
 	  public:

@@ -12,6 +12,7 @@ PmergeMe::PmergeMe(int ac, char **av) {
 
 	try {
 		this->init();
+		this->print_execute();
 	} catch (const PmergeMe::Error &e) {
 		throw PmergeMe::Error();
 	}
@@ -60,43 +61,60 @@ void PmergeMe::init() {
 		this->_num_map[i] = stringToInt(str);
 		this->_num_dqu.push_back(stringToInt(str));
 	}
+}
 
+void PmergeMe::print_execute() {
 	// Before: 3 5 9 7 4
 	cout << "Before: ";
 	for (size_t i = 0; i < this->_len; i++) {
 		cout << this->_num_map[i] << " ";
+		// cout << << this->_num_dqu[i] << " ";
 	}
-	// for (size_t i = 0; i < this->_len; i++) {
-	// 	cout << << this->_num_dqu[i] << " ";
-	// }
 	cout << endl;
 
-	clock_t s, e;
-	s			   = clock();
-	this->_num_map = this->merge_insert_sort(this->_num_map);
-	e			   = clock();
-	// get the differential time in microseconds
-	double time1 = static_cast<double>((e - s) / (CLOCKS_PER_SEC / 1e6));
-
-	s			   = clock();
-	this->_num_dqu = this->merge_insert_sort(this->_num_dqu);
-	e			   = clock();
-	// get the differential time in microseconds
-	double time2 = static_cast<double>((e - s) / (CLOCKS_PER_SEC / 1e6));
+	double time1 = this->sort(this->_num_map);
+	double time2 = this->sort(this->_num_dqu);
 
 	// After: 3 4 5 7 9
 	cout << "After: ";
 	for (size_t i = 0; i < this->_len; i++) {
 		cout << this->_num_map[i] << " ";
+		// cout << this->_num_dqu[i] << " ";
 	}
-	// for (size_t i = 0; i < this->_len; i++) {
-	// 	cout << this->_num_dqu[i] << " ";
-	// }
 	cout << endl;
+
 	// Time to process a range of 5 elements with std::[..] : 0.00031 us
-	// Time to process a range of 5 elements with std::[..] : 0.00014 us
 	cout << "Time to process a range of " << this->_len << " elements with std::map : " << time1 << " us" << endl;
 	cout << "Time to process a range of " << this->_len << " elements with std::deque : " << time2 << " us" << endl;
+}
+
+template <typename T>
+double PmergeMe::sort(T &_arr) {
+	clock_t start, end;
+
+	start = clock();
+	_arr  = this->merge_insert_sort(_arr);
+	end	  = clock();
+
+	// get the differential time in microseconds
+	return (static_cast<double>((end - start) / (CLOCKS_PER_SEC / 1e6)));
+}
+
+template <typename T>
+T PmergeMe::insert_sort(T _arr) {
+	int key;
+	int j;
+
+	for (size_t i = 1; i < _arr.size(); i++) {
+		key = _arr[i];
+		j	= i - 1;
+		while (j >= 0 && _arr[j] > key) {
+			_arr[j + 1] = _arr[j];
+			j--;
+		}
+		_arr[j + 1] = key;
+	}
+	return _arr;
 }
 
 map<int, int> PmergeMe::merge_sort(map<int, int> _left_arr, map<int, int> _right_arr) {
@@ -123,22 +141,6 @@ map<int, int> PmergeMe::merge_sort(map<int, int> _left_arr, map<int, int> _right
 	}
 
 	return result;
-}
-
-map<int, int> PmergeMe::insert_sort(map<int, int> _arr) {
-	int key;
-	int j;
-
-	for (size_t i = 1; i < _arr.size(); i++) {
-		key = _arr[i];
-		j	= i - 1;
-		while (j >= 0 && _arr[j] > key) {
-			_arr[j + 1] = _arr[j];
-			j--;
-		}
-		_arr[j + 1] = key;
-	}
-	return _arr;
 }
 
 map<int, int> PmergeMe::merge_insert_sort(map<int, int> _arr) {
@@ -187,22 +189,6 @@ deque<int> PmergeMe::merge_sort(deque<int> _left_arr, deque<int> _right_arr) {
 		result.push_back(_right_arr[b]);
 
 	return result;
-}
-
-deque<int> PmergeMe::insert_sort(deque<int> _arr) {
-	int key;
-	int j;
-
-	for (size_t i = 1; i < _arr.size(); i++) {
-		key = _arr[i];
-		j	= i - 1;
-		while (j >= 0 && _arr[j] > key) {
-			_arr[j + 1] = _arr[j];
-			j--;
-		}
-		_arr[j + 1] = key;
-	}
-	return _arr;
 }
 
 deque<int> PmergeMe::merge_insert_sort(deque<int> _arr) {

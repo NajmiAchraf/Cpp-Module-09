@@ -41,13 +41,18 @@ class PmergeMe {
 
 	int	 stringToInt(string str);
 	void init();
+	void print_execute();
+
+	template <typename T>
+	double sort(T &_arr);
+
+	template <typename T>
+	T insert_sort(T _arr);
 
 	map<int, int> merge_sort(map<int, int> _left_arr, map<int, int> _right_arr);
-	map<int, int> insert_sort(map<int, int> _arr);
 	map<int, int> merge_insert_sort(map<int, int> _arr);
 
 	deque<int> merge_sort(deque<int> _left_arr, deque<int> _right_arr);
-	deque<int> insert_sort(deque<int> _arr);
 	deque<int> merge_insert_sort(deque<int> _arr);
 
 	class Error : public std::exception {

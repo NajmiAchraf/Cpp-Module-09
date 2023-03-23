@@ -108,7 +108,6 @@ re : fclean all
 
 run : re
 	$(T_RUN_S)
-#	./$(NAME) btc.csv
 	./$(NAME) input.csv
 	$(T_RUN_E)
 

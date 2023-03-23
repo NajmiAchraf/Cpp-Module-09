@@ -83,7 +83,7 @@ int BitcoinExchange::checkType(string str) {
 	bool point	= false;
 	int	 num	= 0;
 	int	 decLen = 0;
-	int	 type	= -1; // {0: char} {1: int} {2: float} {3: double}
+	int	 type	= -1; // {1: int} {2: float} {3: double}
 
 	if (str[i] == '-' || str[i] == '+')
 		i++;
@@ -117,10 +117,7 @@ int BitcoinExchange::checkType(string str) {
 		else if (i == len)
 			type = 3;
 	} else if (num > 0 && i == len) {
-		if (len == 1)
-			type = 0;
-		else
-			type = 1;
+		type = 1;
 	}
 	return type;
 }

@@ -42,11 +42,8 @@ int RPN::stringToInt(string str) {
 	int	 sign = 1;
 	long num  = 0;
 
-	if (str[i] == '-') {
-		sign = -1;
-		i++;
-	} else if (str[i] == '+')
-		i++;
+	if (len != 1)
+		throw RPN::Error();
 	if (str[i] == '\0')
 		throw RPN::Error();
 	while (i < len) {

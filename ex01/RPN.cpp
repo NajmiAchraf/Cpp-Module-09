@@ -78,6 +78,8 @@ void RPN::getResult() {
 				this->r = this->a * this->b;
 				break;
 			case '/':
+				if (this->b == 0)
+					throw RPN::Error();
 				this->r = this->a / this->b;
 				break;
 			default:

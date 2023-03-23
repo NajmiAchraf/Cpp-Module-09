@@ -23,12 +23,12 @@ using std::string;
 class RPN {
   private:
 	RPN();
-	char	  *_entry, *_ptr;
-	string	   str;
-	stack<int> _num_stack;
-	char	  *_next_token;
-	int		   o;
-	double	   a, b, r;
+	char		 *_entry, *_ptr;
+	string		  str;
+	stack<double> _num_stack;
+	char		 *_next_token;
+	int			  o;
+	double		  a, b, r;
 
   public:
 	RPN(char *entry);

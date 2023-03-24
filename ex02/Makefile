@@ -110,7 +110,7 @@ run : re
 	$(T_RUN_S)
 	# ./$(NAME) `jot -r 3000 1 1000 | tr '\n' ' '`
 	# ./$(NAME) `jot -r 3000 0 3000 | tr '\n' ' '`
-	./$(NAME) `ruby -e "puts (1..10).to_a.shuffle.join(' ')"`
+	./$(NAME) `ruby -e "puts (1..3000).to_a.shuffle.join(' ')"`
 	$(T_RUN_E)
 
 .PHONY : all clean fclean re run

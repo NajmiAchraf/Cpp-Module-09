@@ -5,7 +5,7 @@
 CPP			= c++
 CPPFLAGS	= -Wall -Wextra -Werror
 CPPFLAGS	+= -std=c++98
-# CPPFLAGS	+= -g -fsanitize=address
+CPPFLAGS	+= -g -fsanitize=address
 
 CPL = 0
 
@@ -108,7 +108,7 @@ re : fclean all
 
 run : re
 	$(T_RUN_S)
-	./$(NAME) input.csv
+	./$(NAME) input
 	$(T_RUN_E)
 
 .PHONY : all clean fclean re run

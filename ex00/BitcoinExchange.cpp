@@ -215,7 +215,7 @@ void BitcoinExchange::validateDate(int i) {
 	const int	non_leap_year_months[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 	date = splitDate(this->content[i][0]);
-	// 9 January 2009 => 31 December 2022
+	// 2 January 2009 => 31 December 2022
 	// Check year & month range
 	if ((date[0] < 2009 || 2022 < date[0]) || (date[1] < 1 || 12 < date[1]))
 		throw BitcoinExchange::BadInput();
@@ -260,7 +260,12 @@ int BitcoinExchange::findPrevious(int i) {
 	vector<int> base_date;
 	vector<int> content_date;
 
+	if (this->base.size() == 0)
+		return 0;
 	content_date = splitDate(this->content[i][0]);
+	// special case for thr 2009-01-01
+	if (content_date[0] == 2009 && content_date[1] == 1 && content_date[2] == 1 && this->base.size() > 1)
+		throw BitcoinExchange::BadInput();
 	for (size_t a = this->base.size() - 1; a > 1; a--) {
 		// check the nearest previous date
 		base_date = splitDate(this->base[a][0]);
@@ -285,9 +290,7 @@ int BitcoinExchange::find(int i) {
 }
 
 void BitcoinExchange::print(int i, double value, int index) {
-	double exchange;
-
-	exchange = stringToDouble(this->base[index][1]);
+	double exchange = stringToDouble(this->base[index][1]);
 	for (size_t j = 0; j < this->content[i].size(); j++) {
 		if (j == 0)
 			cout << this->content[i][j] << " => ";
@@ -302,24 +305,23 @@ void BitcoinExchange::print() {
 	int	   previous_index;
 
 	for (size_t i = 0; i < this->content.size(); i++) {
-		if (i == 0 && (this->content[i].size() != 2 || this->content[i][0] != "date" || this->content[i][1] != "value")) {
-			cerr << "Error: " << this->content[i][0] << " | " << this->content[i][1] << ", should be like : date | value" << endl;
-		} else if (i > 0) {
-			try {
-				value		   = validate(i);
-				current_index  = this->find(i);
-				previous_index = this->findPrevious(i);
+		if (i == 0 && (this->content[i].size() == 2 && this->content[i][0] == "date" && this->content[i][1] == "value")) {
+			continue;
+		}
+		try {
+			value		   = validate(i);
+			current_index  = this->find(i);
+			previous_index = this->findPrevious(i);
 
-				if (current_index > 0) {
-					this->print(i, value, current_index);
-				} else if (previous_index > 0) {
-					this->print(i, value, previous_index);
-				}
-			} catch (const BitcoinExchange::BadInput &e) {
-				cerr << "Error: " << e.what() << " => " << this->origin[i] << endl;
-			} catch (const std::exception &e) {
-				cerr << "Error: " << e.what() << endl;
+			if (current_index > 0) {
+				this->print(i, value, current_index);
+			} else if (previous_index > 0) {
+				this->print(i, value, previous_index);
 			}
+		} catch (const BitcoinExchange::BadInput &e) {
+			cerr << "Error: " << e.what() << " => " << this->origin[i] << endl;
+		} catch (const std::exception &e) {
+			cerr << "Error: " << e.what() << endl;
 		}
 	}
 }

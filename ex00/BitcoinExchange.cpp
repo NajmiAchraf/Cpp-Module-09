@@ -71,6 +71,8 @@ void BitcoinExchange::fill(vector<vectring> &to_fill, string name_file, char spl
 			if (this->row.size() == 0)
 				this->row.push_back("'empty line'");
 			to_fill.push_back(this->row);
+			if (spliter == '|')
+				this->origin.push_back(this->line);
 		}
 	} else {
 		throw BitcoinExchange::OpenFile();
@@ -314,7 +316,7 @@ void BitcoinExchange::print() {
 					this->print(i, value, previous_index);
 				}
 			} catch (const BitcoinExchange::BadInput &e) {
-				cerr << "Error: " << e.what() << " => " << this->content[i][0] << endl;
+				cerr << "Error: " << e.what() << " => " << this->origin[i] << endl;
 			} catch (const std::exception &e) {
 				cerr << "Error: " << e.what() << endl;
 			}

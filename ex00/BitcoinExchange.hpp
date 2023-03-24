@@ -28,6 +28,7 @@ class BitcoinExchange {
 	BitcoinExchange();
 	vector<vectring> base;
 	vector<vectring> content;
+	vectring		 origin;
 	vectring		 row;
 	string			 line;
 	string			 word;

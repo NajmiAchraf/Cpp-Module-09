@@ -213,7 +213,7 @@ void BitcoinExchange::validateDate(int i) {
 	const int	non_leap_year_months[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 	date = splitDate(this->content[i][0]);
-	// 9 January 2009 => 31 December 2023
+	// 9 January 2009 => 31 December 2022
 	// Check year & month range
 	if ((date[0] < 2009 || 2022 < date[0]) || (date[1] < 1 || 12 < date[1]))
 		throw BitcoinExchange::BadInput();
@@ -260,11 +260,14 @@ int BitcoinExchange::findPrevious(int i) {
 
 	content_date = splitDate(this->content[i][0]);
 	for (size_t a = this->base.size() - 1; a > 1; a--) {
-		// check previous Dates
+		// check the nearest previous date
 		base_date = splitDate(this->base[a][0]);
-		if (base_date[0] <= content_date[0] && base_date[1] <= content_date[1] && base_date[2] <= content_date[2]) {
+		if (base_date[0] < content_date[0])
 			return a;
-		}
+		else if (base_date[0] == content_date[0] && base_date[1] < content_date[1])
+			return a;
+		else if (base_date[0] == content_date[0] && base_date[1] == content_date[1] && base_date[2] < content_date[2])
+			return a;
 	}
 	return -1;
 }
@@ -279,7 +282,7 @@ int BitcoinExchange::find(int i) {
 	return -1;
 }
 
-void BitcoinExchange::print(int i, int value, int index) {
+void BitcoinExchange::print(int i, double value, int index) {
 	double exchange;
 
 	exchange = stringToDouble(this->base[index][1]);
@@ -298,7 +301,7 @@ void BitcoinExchange::print() {
 
 	for (size_t i = 0; i < this->content.size(); i++) {
 		if (i == 0 && (this->content[i].size() != 2 || this->content[i][0] != "date" || this->content[i][1] != "value")) {
-			cerr << "Error: " << this->content[i][0] << " | " << this->content[i][1] << endl;
+			cerr << "Error: " << this->content[i][0] << " | " << this->content[i][1] << ", should be like : date | value" << endl;
 		} else if (i > 0) {
 			try {
 				value		   = validate(i);

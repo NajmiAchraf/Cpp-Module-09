@@ -108,7 +108,7 @@ re : fclean all
 
 run : re
 	$(T_RUN_S)
-	./$(NAME) input.csv
+	./$(NAME) input
 	$(T_RUN_E)
 
 .PHONY : all clean fclean re run

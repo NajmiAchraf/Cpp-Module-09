@@ -50,7 +50,7 @@ class BitcoinExchange {
 	double		validate(int i);
 	int			findPrevious(int i);
 	int			find(int i);
-	void		print(int i, int value, int index);
+	void		print(int i, double value, int index);
 	void		print();
 
 	class OpenFile : public std::exception {

@@ -6,6 +6,8 @@ int main(int ac, char **av) {
 
 		try {
 			BitcoinExchange btc(str);
+			btc.init();
+			btc.print();
 		} catch (const std::exception &e) {
 			cerr << "Error: " << e.what() << endl;
 		}

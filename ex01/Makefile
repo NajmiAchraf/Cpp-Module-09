@@ -5,7 +5,7 @@
 CPP			= c++
 CPPFLAGS	= -Wall -Wextra -Werror
 CPPFLAGS	+= -std=c++98
-# CPPFLAGS	+= -g -fsanitize=address
+CPPFLAGS	+= -g3 -fsanitize=address
 
 CPL = 0
 
@@ -109,8 +109,13 @@ re : fclean all
 run : re
 	$(T_RUN_S)
 	./$(NAME) "8 9 * 9 - 9 - 9 - 4 - 1 +"
+	./$(NAME) "9 8 * 4 * 4 / 2 + 9 - 8 - 8 - 1 - 6 -"
+	./$(NAME) "1 2 * 2 / 5 + 4 6 * 6 / 8 * 2 / + 2 * 2 -"
 	./$(NAME) "1 3 - 0 / 0 *"
 	./$(NAME) "1 3 + 5 /"
+	./$(NAME) "1 3 + 5 5 / 5 +"
+	./$(NAME) "1 3 + 5 / -"
+	./$(NAME) ""
 	$(T_RUN_E)
 
 .PHONY : all clean fclean re run

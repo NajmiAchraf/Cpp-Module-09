@@ -9,13 +9,6 @@ RPN::RPN(char *entry) {
 
 	this->_entry	  = entry;
 	this->_next_token = NULL;
-
-	try {
-		this->getResult();
-		cout << "the answer : " << this->_num_stack.top() << endl;
-	} catch (const RPN::Error &e) {
-		throw RPN::Error();
-	}
 }
 
 RPN::RPN(const RPN &rpn) {
@@ -90,7 +83,8 @@ void RPN::getResult() {
 			this->_num_stack.push(this->stringToInt(str));
 		}
 		this->_ptr = strtok_r(nullptr, " ", &this->_next_token);
-		if (!this->_ptr && this->_num_stack.size() != 1)
-			throw RPN::Error();
 	}
+	if (this->_num_stack.size() != 1)
+		throw RPN::Error();
+	cout << "the answer : " << this->_num_stack.top() << endl;
 }

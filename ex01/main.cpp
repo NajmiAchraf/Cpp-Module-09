@@ -10,6 +10,7 @@ int main(int ac, char **av) {
 	if (run(ac)) {
 		try {
 			RPN btc(av[1]);
+			btc.getResult();
 		} catch (const std::exception &e) {
 			cerr << e.what() << endl;
 		}

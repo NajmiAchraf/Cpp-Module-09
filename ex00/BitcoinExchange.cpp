@@ -6,18 +6,6 @@ BitcoinExchange::BitcoinExchange() {
 
 BitcoinExchange::BitcoinExchange(string file_name) : file_name(file_name) {
 	cout << C_GREEN << "Parameterize constructor" << C_RES << endl;
-	try {
-		this->init();
-		this->print();
-	} catch (const BitcoinExchange::BadInput &e) {
-		throw BitcoinExchange::BadInput();
-	} catch (const BitcoinExchange::NegativeNumber &e) {
-		throw BitcoinExchange::NegativeNumber();
-	} catch (const BitcoinExchange::LargeNumber &e) {
-		throw BitcoinExchange::LargeNumber();
-	} catch (const BitcoinExchange::OpenFile &e) {
-		throw BitcoinExchange::OpenFile();
-	}
 }
 
 BitcoinExchange::BitcoinExchange(const BitcoinExchange &bitcoinExchange) : file_name(bitcoinExchange.file_name) {
